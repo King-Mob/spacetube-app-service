@@ -59,10 +59,6 @@ export async function startDuckDB() {
     return connection;
 }
 
-export async function getDuckDBConnection() {
-    return connection;
-}
-
 export async function getInviteCodeByTubeId(tubeRoomId) {
     const getExistingInviteCode = `SELECT * FROM InviteTubeRoomLinks WHERE tube_room_id='${tubeRoomId}';`;
     const existingInviteCodeRows = await connection.run(getExistingInviteCode);
