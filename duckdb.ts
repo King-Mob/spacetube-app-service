@@ -1,6 +1,4 @@
-import { existsSync } from "node:fs";
 import { DuckDBInstance } from "@duckdb/node-api";
-import { createModuleResolutionCache } from "typescript";
 
 let connection;
 
