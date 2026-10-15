@@ -1,5 +1,5 @@
 import "dotenv/config";
-import express from "express";
+import express, { Express } from "express";
 import multer from "multer";
 import fs from "fs";
 import path from "path";
@@ -32,6 +32,7 @@ import { startDuckDB } from "./duckdb.js";
 import { startDiscord } from "./discord/index.js";
 import { startSlack } from "./slack/index.js";
 import { startRocketchat } from "./rocketchat/index.js";
+import { startChatHackers } from "./chathackers/index.js";
 
 //import { startWhatsapp } from "./whatsapp/index.js";
 
@@ -85,7 +86,7 @@ asApp.listen(8133);
 
 //spacetube service on 8134
 
-const app = express();
+const app: Express = express();
 const upload = multer({ dest: "uploads/" });
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -407,7 +408,7 @@ app.put("/api/groupuser", imageUpload, async (req, res) => {
                         setProfilePicture(cloneUser.content.user, content_uri);
                     });
 
-                    fs.unlink(filePath, () => {});
+                    fs.unlink(filePath, () => { });
                 });
             }
             if (req.body.displayName) {
@@ -451,5 +452,6 @@ if (process.env.SLACK_SECRET) {
 }
 
 startRocketchat(app);
+startChatHackers(app);
 
 app.listen(8134);

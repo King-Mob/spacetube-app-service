@@ -22,3 +22,10 @@ export type TubeRoomLink = {
     channel_type: string;
     tube_room_id: string;
 }
+
+export type SlackEvent = {
+    team: string;
+    channel: string;
+    text: string;
+    user: string;
+}

@@ -22,6 +22,7 @@ import { sendMessageWhatsapp } from "../whatsapp/index.js";
 import { handleWhatsapp, handleFormatWhatsapp, joinAsSpacetubeWhatsapp } from "../whatsapp/index.js";
 import { sendSlackMessage } from "../slack/index.js";
 import { sendRocketchatMessage } from "../rocketchat/index.js";
+import { sendChatHackersMessage } from "../chathackers/index.js";
 import {
     getTubeRoomLinkByChannelId,
     getTubeRoomLinksByTubeId,
@@ -399,7 +400,14 @@ const handleMessageLocalTube = async (tubeRoomLinks: TubeRoomLink[], event: even
             const [roomId, url] = link.channel_id.split("@");
             sendRocketchatMessage(roomId, message, url, profile.displayname, imageUrl);
         }
+        if (link.channel_type === "chathackers") {
+            const profileResponse = await getProfile(event.sender);
+            const profile = await profileResponse.json();
+
+            sendChatHackersMessage(profile.displayname, message, link.channel_id);
+        }
     });
+
 };
 
 const handleMessageRemoteTube = async (tubeIntermediary, event, message) => {

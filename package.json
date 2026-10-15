@@ -33,8 +33,11 @@
     "xkpasswd": "^1.0.5"
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
     "@types/node": "^20.11.24",
     "@types/react": "^18.2.64",
+    "@types/sha1": "^1.1.5",
+    "@types/uuid": "^10.0.0",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
     "os-browserify": "^0.3.0",

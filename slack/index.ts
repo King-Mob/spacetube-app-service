@@ -23,9 +23,10 @@ import {
     uploadImage,
 } from "../matrix/matrixClientRequests";
 import { sendMessageAsMatrixUser } from "../matrix/handler";
-import { Request, Response } from "express";
+import { Request, Response, Express } from "express";
 import { v4 as uuidv4 } from "uuid";
 import sha1 from "sha1";
+import { SlackEvent, TubeRoomLink } from "../types";
 
 const { SLACK_SECRET, SLACK_CLIENT_ID, HOME_SERVER, INVITE_PREFIX } = process.env;
 
@@ -36,10 +37,10 @@ export function generateInviteCode(optionalInviteText: string) {
 
     const hashPortion = sha1(uuidv4()).slice(0, 8);
 
-    return `CoCoDoJo_${cleanTextPortion}_${hashPortion}~${HOME_SERVER.replaceAll(".", "\\")}`;
+    return `CoCoDoJo_${cleanTextPortion}_${hashPortion}~${(HOME_SERVER as string).replaceAll(".", "\\")}`;
 }
 
-async function echo(event) {
+async function echo(event: SlackEvent) {
     await deleteChannelTeamLinks(event.channel);
     await insertChannelTeamLink(event.channel, event.team);
 
@@ -49,7 +50,7 @@ async function echo(event) {
     sendSlackMessage(event.channel, newMessage, "spacetube");
 }
 
-async function create(event, message) {
+async function create(event: SlackEvent, message: string) {
     const createRoomResponse = await createRoom("tube room");
     const createRoomResult = await createRoomResponse.json();
     const tube_room_id = createRoomResult.room_id;
@@ -65,7 +66,7 @@ async function create(event, message) {
     //add message about what the other group needs to do
 }
 
-async function remindInviteCode(existingTube) {
+async function remindInviteCode(existingTube: TubeRoomLink) {
     const existingInviteCode = await getInviteCodeByTubeId(existingTube.tube_room_id);
 
     sendSlackMessage(
@@ -75,7 +76,7 @@ async function remindInviteCode(existingTube) {
     );
 }
 
-async function connect(event, message) {
+async function connect(event: SlackEvent, message: string) {
     await deleteChannelTeamLinks(event.channel);
     await insertChannelTeamLink(event.channel, event.team);
 
@@ -84,7 +85,7 @@ async function connect(event, message) {
     if (invite) {
         deleteChannelTubeRoomLinks(event.channel);
 
-        insertChannelTubeRoomLink(event.channel, "slack", invite.tube_room_id);
+        insertChannelTubeRoomLink(event.channel, "slack", invite.tube_room_id as string);
         sendSlackMessage(event.channel, "You have joined the spacetube!", "spacetube");
         //add message about how to send messages
     } else {
@@ -92,7 +93,7 @@ async function connect(event, message) {
     }
 }
 
-async function forward(event, message) {
+async function forward(event: SlackEvent, message: string) {
     const link = await getTubeRoomLinkByChannelId(event.channel);
 
     if (!link) return;
@@ -127,14 +128,14 @@ async function forward(event, message) {
     }
 }
 
-async function handleMention(event) {
+async function handleMention(event: SlackEvent) {
     const existingTube = await getTubeRoomLinkByChannelId(event.channel);
     const { bot_user_id } = await getBotFromTeam(event.team);
     const message = event.text.replace(`<@${bot_user_id}>`, "");
     const messageNoSpaces = message.replaceAll(" ", "");
 
     if (!existingTube) {
-        if (messageNoSpaces.includes(INVITE_PREFIX)) {
+        if (messageNoSpaces.includes(INVITE_PREFIX as string)) {
             connect(event, messageNoSpaces);
             return;
         } else {
@@ -143,7 +144,7 @@ async function handleMention(event) {
         }
     } else {
         if (!messageNoSpaces) {
-            remindInviteCode(existingTube);
+            remindInviteCode(existingTube as TubeRoomLink);
             return;
         } else {
             if (messageNoSpaces.includes("!echo")) {
@@ -157,10 +158,10 @@ async function handleMention(event) {
     }
 }
 
-const previousEvents = [];
+const previousEvents: any[] = [];
 
-export async function startSlack(app) {
-    app.post("/slack/events", async function (req, res) {
+export async function startSlack(app: Express) {
+    app.post("/slack/events", async function (req: Request, res: Response) {
         const { challenge, event } = req.body;
 
         // slack sends events twice, we only want to handle the first one
@@ -178,13 +179,13 @@ export async function startSlack(app) {
         }
     });
 
-    app.get("/api/slack/process/", async function (req, res) {
+    app.get("/api/slack/process/", async function (req: Request, res: Response) {
         const { slackCode } = req.query;
 
         const data = new URLSearchParams();
-        data.append("code", slackCode);
-        data.append("client_id", SLACK_CLIENT_ID);
-        data.append("client_secret", SLACK_SECRET);
+        data.append("code", slackCode as string);
+        data.append("client_id", SLACK_CLIENT_ID as string);
+        data.append("client_secret", SLACK_SECRET as string);
 
         const slackResponse = await fetch("https://slack.com/api/oauth.v2.access", {
             method: "POST",
@@ -210,7 +211,7 @@ export async function startSlack(app) {
 
 async function getBotFromChannel(channelId: string) {
     const { team_id } = await getChannelTeamLink(channelId);
-    return await getBotFromTeam(team_id);
+    return await getBotFromTeam(team_id as string);
 }
 
 async function getBotFromTeam(teamId: string) {
