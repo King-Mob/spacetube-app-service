@@ -1,0 +1,26 @@
+services:
+  spacetube:
+    build: .
+    image: spacetube:local
+    container_name: spacetube
+    restart: unless-stopped
+    env_file: .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "8133:8133"          # synapse -> appservice
+    networks:
+      - traefik
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik
+      - traefik.http.routers.spacetube.entrypoints=web-secure
+      - traefik.http.routers.spacetube.rule=Host(`spacetube.spacetu.be`)
+      - traefik.http.routers.spacetube.service=spacetube
+      - traefik.http.routers.spacetube.tls=true
+      - traefik.http.routers.spacetube.tls.certResolver=default
+      - traefik.http.services.spacetube.loadbalancer.server.port=8134
+
+networks:
+  traefik:
+    external: true

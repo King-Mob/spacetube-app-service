@@ -1,0 +1,6 @@
+node_modules
+dist-server
+dist-web
+.env
+registration.yaml
+.git
