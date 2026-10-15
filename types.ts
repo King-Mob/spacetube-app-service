@@ -34,5 +34,6 @@ export type ChatHackersEvent = {
     room_id: string;
     sender: string;
     origin: string;
+    displayname?: string;
     content?: { body?: string };
 };

@@ -29,8 +29,7 @@ function splitChannelId(channelId: string): [string, string] {
 }
 
 function getDisplayName(event: ChatHackersEvent) {
-    // event.sender looks like @name:homeserver
-    return event.sender.split(":")[0].replace("@", "");
+    return event.displayname ?? event.sender.split(":")[0].replace("@", "");
 }
 
 async function echo(event: ChatHackersEvent, message: string) {
