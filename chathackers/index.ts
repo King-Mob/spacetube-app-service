@@ -76,7 +76,6 @@ async function remindInviteCode(existingTube: TubeRoomLink) {
             existingTube.channel_id
         );
     }
-
 }
 
 async function connect(event: ChatHackersEvent, message: string) {
