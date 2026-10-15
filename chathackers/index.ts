@@ -59,11 +59,24 @@ async function create(event: ChatHackersEvent, message: string) {
 async function remindInviteCode(existingTube: TubeRoomLink) {
     const existingInviteCode = await getInviteCodeByTubeId(existingTube.tube_room_id);
 
-    sendChatHackersMessage(
-        "Spacetube",
-        `Tube already open with invite code: ${existingInviteCode.invite_code}`,
-        existingTube.channel_id
-    );
+    if (existingInviteCode) {
+        sendChatHackersMessage(
+            "Spacetube",
+            `Tube already open with invite code: ${existingInviteCode.invite_code}`,
+            existingTube.channel_id
+        );
+    }
+    else {
+        const inviteCode = generateInviteCode();
+        insertInviteTubeRoomLink(inviteCode, existingTube.tube_room_id);
+
+        sendChatHackersMessage(
+            "Spacetube",
+            `Tube already open with invite code: ${inviteCode}`,
+            existingTube.channel_id
+        );
+    }
+
 }
 
 async function connect(event: ChatHackersEvent, message: string) {

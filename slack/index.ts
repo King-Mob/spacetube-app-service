@@ -30,7 +30,7 @@ import { SlackEvent, TubeRoomLink } from "../types";
 
 const { SLACK_SECRET, SLACK_CLIENT_ID, HOME_SERVER, INVITE_PREFIX } = process.env;
 
-export function generateInviteCode(optionalInviteText: string) {
+export function generateInviteCode(optionalInviteText?: string) {
     const textPortion = optionalInviteText || xkpasswd({ separators: "" });
 
     const cleanTextPortion = textPortion.replaceAll("~", "").replaceAll("CoCoDoJo_", "");
