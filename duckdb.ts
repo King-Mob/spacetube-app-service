@@ -1,6 +1,11 @@
-import { DuckDBInstance } from "@duckdb/node-api";
+import { DuckDBConnection, DuckDBInstance } from "@duckdb/node-api";
 
-let connection;
+type User = {
+    user_id: string;
+    access_token: string;
+}
+
+let connection: DuckDBConnection;
 
 export async function startDuckDB() {
     const spacetubeDuckDBFileName = "spacetube_duckdb.db";
@@ -59,7 +64,7 @@ export async function startDuckDB() {
     return connection;
 }
 
-export async function getInviteCodeByTubeId(tubeRoomId) {
+export async function getInviteCodeByTubeId(tubeRoomId: string) {
     const getExistingInviteCode = `SELECT * FROM InviteTubeRoomLinks WHERE tube_room_id='${tubeRoomId}';`;
     const existingInviteCodeRows = await connection.run(getExistingInviteCode);
     const existingInviteCodes = await existingInviteCodeRows.getRowObjects();
@@ -67,7 +72,7 @@ export async function getInviteCodeByTubeId(tubeRoomId) {
     return existingInviteCode;
 }
 
-export async function getTubeRoomLinksByTubeId(tubeRoomId) {
+export async function getTubeRoomLinksByTubeId(tubeRoomId: string) {
     const tubeRoomLinksSQL = `SELECT * FROM ChannelTubeRoomLinks WHERE tube_room_id='${tubeRoomId}'`;
 
     const tubeRoomLinkRows = await connection.run(tubeRoomLinksSQL);
@@ -76,29 +81,29 @@ export async function getTubeRoomLinksByTubeId(tubeRoomId) {
     return tubeRoomLinks;
 }
 
-export async function getTubeRoomLinkByChannelId(channelId) {
+export async function getTubeRoomLinkByChannelId(channelId: string) {
     const linkRows = await connection.run(`SELECT * FROM ChannelTubeRoomLinks WHERE channel_id='${channelId}';`);
     const links = await linkRows.getRowObjects();
     const link = links[0];
     return link;
 }
 
-export async function insertChannelTubeRoomLink(channelId, channelType, tubeRoomId) {
+export async function insertChannelTubeRoomLink(channelId: string, channelType: string, tubeRoomId: string) {
     const insertChannelTubeRoomLink = `INSERT INTO ChannelTubeRoomLinks VALUES ('${channelId}', '${channelType}', '${tubeRoomId}');`;
     await connection.run(insertChannelTubeRoomLink);
 }
 
-export async function deleteChannelTubeRoomLinks(channelId) {
+export async function deleteChannelTubeRoomLinks(channelId: string) {
     const deleteChannelTubeRoomLinks = `DELETE FROM ChannelTubeRoomLinks WHERE channel_id='${channelId}';`;
     await connection.run(deleteChannelTubeRoomLinks);
 }
 
-export async function insertChannelTeamLink(channelId, teamId) {
+export async function insertChannelTeamLink(channelId: string, teamId: string) {
     const insertChannelTeamLink = `INSERT INTO SlackChannelTeamLinks VALUES ('${channelId}','${teamId}');`;
     await connection.run(insertChannelTeamLink);
 }
 
-export async function getChannelTeamLink(channelId) {
+export async function getChannelTeamLink(channelId: string) {
     const getChannelTeamLinksSQL = `SELECT * FROM SlackChannelTeamLinks WHERE channel_id='${channelId}';`;
     const channelTeamLinkRows = await connection.run(getChannelTeamLinksSQL);
     const channelTeamLinks = await channelTeamLinkRows.getRowObjects();
@@ -106,17 +111,17 @@ export async function getChannelTeamLink(channelId) {
     return channelTeamLink;
 }
 
-export async function deleteChannelTeamLinks(channelId) {
+export async function deleteChannelTeamLinks(channelId: string) {
     const deleteChannelTeamLinks = `DELETE FROM SlackChannelTeamLinks WHERE channel_id='${channelId}';`;
     await connection.run(deleteChannelTeamLinks);
 }
 
-export async function insertInviteTubeRoomLink(inviteCode, tubeRoomId) {
+export async function insertInviteTubeRoomLink(inviteCode: string, tubeRoomId: string) {
     const insertInviteTubeRoomLink = `INSERT INTO InviteTubeRoomLinks VALUES ('${inviteCode}','${tubeRoomId}');`;
     await connection.run(insertInviteTubeRoomLink);
 }
 
-export async function getInviteTubeRoomLink(inviteCode) {
+export async function getInviteTubeRoomLink(inviteCode: string) {
     const getInviteTubeRoomLinkSQL = `SELECT * FROM InviteTubeRoomLinks WHERE invite_code='${inviteCode}';`;
     const inviteTubeRoomsLinkRows = await connection.run(getInviteTubeRoomLinkSQL);
     const inviteTubeRoomsLinks = await inviteTubeRoomsLinkRows.getRowObjects();
@@ -124,12 +129,12 @@ export async function getInviteTubeRoomLink(inviteCode) {
     return inviteTubeRoomLink;
 }
 
-export async function insertUserTubeUserLink(user, tubeUser) {
+export async function insertUserTubeUserLink(user: string, tubeUser: User) {
     const insertUserSQL = `INSERT INTO UserTubeUserLinks VALUES ('${user}','${tubeUser.user_id}','${tubeUser.access_token}');`;
     connection.run(insertUserSQL);
 }
 
-export async function getTubeUserMembership(tubeUserId, tubeRoomId) {
+export async function getTubeUserMembership(tubeUserId: string, tubeRoomId: string) {
     const tubeUserMembershipSQL = `SELECT * FROM TubeUserRoomMemberships WHERE tube_user_id='${tubeUserId}' AND room_id='${tubeRoomId}';`;
     const tubeUserMembershipRows = await connection.run(tubeUserMembershipSQL);
     const tubeUserMemberships = await tubeUserMembershipRows.getRowObjects();
@@ -137,12 +142,12 @@ export async function getTubeUserMembership(tubeUserId, tubeRoomId) {
     return tubeUserMembership;
 }
 
-export async function insertTubeUserMembership(userId, roomId) {
+export async function insertTubeUserMembership(userId: string, roomId: string) {
     const insertTubeUserMembershipSQL = `INSERT INTO TubeUserRoomMemberships VALUES ('${userId}','${roomId}');`;
     connection.run(insertTubeUserMembershipSQL);
 }
 
-export async function getTubeUserByTubeUserId(tubeUserId) {
+export async function getTubeUserByTubeUserId(tubeUserId: string) {
     const getTubeUserSQL = `SELECT * FROM UserTubeUserLinks WHERE tube_user_id='${tubeUserId}';`;
     const tubeUserRows = await connection.run(getTubeUserSQL);
     const tubeUsers = await tubeUserRows.getRowObjects();
@@ -150,19 +155,19 @@ export async function getTubeUserByTubeUserId(tubeUserId) {
     return tubeUser;
 }
 
-export async function getTubeUserByUserId(userId) {
+export async function getTubeUserByUserId(userId: string) {
     const userRows = await connection.run(`SELECT * FROM UserTubeUserLinks WHERE user_id='${userId}'`);
     const users = await userRows.getRowObjects();
     const user = users[0];
     return user;
 }
 
-export async function insertTeamBotTokenLink(teamId, botToken, botUserId) {
+export async function insertTeamBotTokenLink(teamId: string, botToken: string, botUserId: string) {
     const insertTeamBotTokenLink = `INSERT INTO SlackTeamBotTokenLinks VALUES ('${teamId}','${botToken}','${botUserId}');`;
     connection.run(insertTeamBotTokenLink);
 }
 
-export async function getTeamBotTokenLink(teamId) {
+export async function getTeamBotTokenLink(teamId: string) {
     const getBotTokenSQL = `SELECT * FROM SlackTeamBotTokenLinks WHERE team_id='${teamId}';`;
     const teamBotTokenLinkRows = await connection.run(getBotTokenSQL);
     const teamBotTokenLinks = await teamBotTokenLinkRows.getRowObjects();
@@ -170,12 +175,12 @@ export async function getTeamBotTokenLink(teamId) {
     return teamBotTokenLink;
 }
 
-export async function insertRocketchatUrlIpLink(url, ip_address) {
+export async function insertRocketchatUrlIpLink(url: string, ip_address: string) {
     const insertRocketchatUrlIpLink = `INSERT INTO RocketchatUrlIpLinks VALUES ('${url}','${ip_address}');`;
     connection.run(insertRocketchatUrlIpLink);
 }
 
-export async function getRocketchatUrlIpLinkByIp(ip_address) {
+export async function getRocketchatUrlIpLinkByIp(ip_address: string) {
     const getUrlSQL = `SELECT * FROM RocketchatUrlIpLinks WHERE ip_address='${ip_address}';`;
     const urlIpLinkRows = await connection.run(getUrlSQL);
     const urlIpLinks = await urlIpLinkRows.getRowObjects();
