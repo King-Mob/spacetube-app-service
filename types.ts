@@ -29,3 +29,10 @@ export type SlackEvent = {
     text: string;
     user: string;
 }
+
+export type ChatHackersEvent = {
+    room_id: string;
+    sender: string;
+    origin: string;
+    content?: { body?: string };
+};

@@ -407,7 +407,6 @@ const handleMessageLocalTube = async (tubeRoomLinks: TubeRoomLink[], event: even
             sendChatHackersMessage(profile.displayname, message, link.channel_id);
         }
     });
-
 };
 
 const handleMessageRemoteTube = async (tubeIntermediary, event, message) => {
