@@ -136,6 +136,7 @@ async function handleEvent(event: ChatHackersEvent) {
         }
     } else {
         if (!messageNoSpaces) {
+            console.log("existing tube", existingTube)
             remindInviteCode(existingTube as TubeRoomLink);
             return;
         } else {
