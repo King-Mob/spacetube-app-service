@@ -7,7 +7,7 @@ export function startChatHackers(app: Express) {
     app.post("/chathackers", (req: Request, res: Response) => {
         console.log(req.body);
 
-        res.send("great stuff")
+        res.send({ message: "great stuff" })
     })
 }
 
