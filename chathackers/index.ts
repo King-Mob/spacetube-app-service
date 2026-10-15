@@ -151,15 +151,15 @@ async function handleEvent(event: ChatHackersEvent) {
 }
 
 // channelId is `${room_id}@${origin}`, origin being the chat hackers return url
-export async function sendChatHackersMessage(displayName: string, text: string, channelId: string) {
+export async function sendChatHackersMessage(name: string, message: string, channelId: string) {
     const [roomId, url] = splitChannelId(channelId);
 
     fetch(url, {
         method: "POST",
         body: JSON.stringify({
             roomId,
-            displayName,
-            text,
+            name,
+            message,
         }),
         headers: {
             "Content-type": "application/json",
