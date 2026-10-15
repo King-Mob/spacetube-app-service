@@ -18,7 +18,7 @@ import {
 } from "../matrix/matrixClientRequests";
 import { sendMessageAsMatrixUser } from "../matrix/handler";
 import { Request, Response, Express } from "express";
-import { ChatHackersEvent, TubeRoomLink } from "../types";
+import { ChatHackersEvent, TubeRoomLink, user } from "../types";
 
 const { INVITE_PREFIX } = process.env;
 
@@ -102,10 +102,13 @@ async function forward(event: ChatHackersEvent, message: string) {
     const user = await getTubeUserByUserId(userId);
 
     if (user) {
-        const matrixUser = {
-            user_id: user.tube_user_id,
-            access_token: user.tube_user_access_token,
+        const matrixUser: user = {
+            user_id: user.tube_user_id as string,
+            access_token: user.tube_user_access_token as string,
         };
+
+        const displayName = getDisplayName(event);
+        setDisplayName(matrixUser, displayName);
 
         sendMessageAsMatrixUser(matrixUser, message, link.tube_room_id, {
             from: channelId,
