@@ -62,7 +62,7 @@ async function connect(event, message, url) {
     if (invite) {
         deleteChannelTubeRoomLinks(channelId);
 
-        insertChannelTubeRoomLink(channelId, "rocketchat", invite.tube_room_id);
+        insertChannelTubeRoomLink(channelId, "rocketchat", invite.tube_room_id as string);
         sendRocketchatMessage(event.room.id, "You have joined the spacetube!", url);
         //add message about how to send messages
     } else {

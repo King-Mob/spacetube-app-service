@@ -98,7 +98,7 @@ app.use("/rocketchat", express.static("dist-web"));
 app.get("/image", async function (req, res) {
     const { mxc } = req.query;
 
-    const imageResponse = await getImage(mxc);
+    const imageResponse = await getImage(mxc as string);
 
     const imageBlob: Blob = await imageResponse.blob();
     const imageBufferArray = await imageBlob.arrayBuffer();
@@ -138,7 +138,7 @@ app.post("/api/register", async (req, res) => {
 });
 
 app.get("/api/tubeInfo", async (req, res) => {
-    const linkEvent = await getItem("linkToken", req.query.linkToken, "spacetube.link");
+    const linkEvent = await getItem("linkToken", req.query.linkToken as string, "spacetube.link");
     if (linkEvent) {
         const tube = await getItemIncludes("connectedRooms", linkEvent.content.roomId);
 
@@ -171,7 +171,7 @@ app.get("/api/tubeInfo", async (req, res) => {
 app.get("/api/tubeInfo/sync", async (req, res) => {
     const { linkToken, nextBatch } = req.query;
 
-    const linkEvent = await getItem("linkToken", linkToken, "spacetube.link");
+    const linkEvent = await getItem("linkToken", linkToken as string, "spacetube.link");
 
     if (linkEvent) {
         const matrixRoomId = linkEvent.content.roomId;
@@ -198,7 +198,7 @@ app.get("/api/tubeInfo/sync", async (req, res) => {
 app.get("/api/tubeInfo/userIds", async (req, res) => {
     const { linkToken } = req.query;
 
-    const linkEvent = await getItem("linkToken", linkToken, "spacetube.link");
+    const linkEvent = await getItem("linkToken", linkToken as string, "spacetube.link");
 
     if (linkEvent) {
         const matrixRoomId = linkEvent.content.roomId;
@@ -226,7 +226,7 @@ app.get("/api/tubeInfo/userIds", async (req, res) => {
 app.get("/api/tubeInfo/displaynames", async (req, res) => {
     const { linkToken } = req.query;
 
-    const linkEvent = await getItem("linkToken", linkToken, "spacetube.link");
+    const linkEvent = await getItem("linkToken", linkToken as string, "spacetube.link");
 
     if (linkEvent) {
         const tube = await getItemIncludes("connectedRooms", linkEvent.content.roomId);
@@ -252,7 +252,7 @@ app.get("/api/tubeInfo/displaynames", async (req, res) => {
 app.get("/api/tubeInfo/editToken", async (req, res) => {
     const { linkToken } = req.query;
 
-    const linkEvent = await getItem("linkToken", linkToken, "spacetube.link");
+    const linkEvent = await getItem("linkToken", linkToken as string, "spacetube.link");
 
     if (linkEvent) {
         const matrixRoomId = linkEvent.content.roomId;
@@ -274,7 +274,7 @@ app.get("/api/tubeInfo/editToken", async (req, res) => {
 app.get("/api/invite", async (req, res) => {
     const { inviteUserId } = req.query;
 
-    const invitation = await getItem("inviteUserId", inviteUserId);
+    const invitation = await getItem("inviteUserId", inviteUserId as string);
 
     if (invitation) res.send({ success: true, invitation });
     else res.send({ success: false, message: "No invite with that id found." });
@@ -334,7 +334,7 @@ app.post("/api/groupuser", async (req, res) => {
 app.get("/api/groupuser/name", async (req, res) => {
     const { token } = req.query;
 
-    const groupUser = await getItem("editToken", token, "spacetube.group.user");
+    const groupUser = await getItem("editToken", token as string, "spacetube.group.user");
 
     if (groupUser) {
         const profileResponse = await getProfile(groupUser.content.userId);
@@ -349,7 +349,7 @@ app.get("/api/groupuser/name", async (req, res) => {
 app.get("/api/groupuser/picture", async (req, res) => {
     const { token } = req.query;
 
-    const groupUser = await getItem("editToken", token, "spacetube.group.user");
+    const groupUser = await getItem("editToken", token as string, "spacetube.group.user");
 
     if (groupUser) {
         const profileResponse = await getProfile(groupUser.content.userId);
@@ -366,7 +366,7 @@ app.get("/api/groupuser/picture", async (req, res) => {
                 res.send(Buffer.from(buf));
             });
         } else {
-            res.sendStatus("404");
+            res.sendStatus(404);
         }
     } else {
         res.send({ success: false, message: "No user with matching edit token" });
@@ -376,11 +376,11 @@ app.get("/api/groupuser/picture", async (req, res) => {
 const imageUpload = upload.fields([
     { name: "displayName", maxCount: 1 },
     { name: "profilePicture", maxCount: 1 },
-]);
+]);/*
 app.put("/api/groupuser", imageUpload, async (req, res) => {
     const { token } = req.query;
 
-    const groupUser = await getItem("editToken", token, "spacetube.group.user");
+    const groupUser = await getItem("editToken", token as string, "spacetube.group.user");
 
     if (groupUser) {
         const inviteUsers = await getAllItems(
@@ -428,7 +428,7 @@ app.put("/api/groupuser", imageUpload, async (req, res) => {
     } else {
         res.send({ success: false, message: "No user with matching edit token" });
     }
-});
+});*/
 
 app.post("/api/mailinglist", (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
@@ -436,7 +436,7 @@ app.post("/api/mailinglist", (req, res) => {
     const { address } = req.query;
     const { MAILINGLIST_ROOM_ID } = process.env;
 
-    sendMessage(MAILINGLIST_ROOM_ID, address);
+    sendMessage(MAILINGLIST_ROOM_ID as string, address as string);
 
     res.send({ success: true });
 });

@@ -59,7 +59,7 @@ const connect = async (event, message) => {
     if (invite) {
         deleteChannelTubeRoomLinks(event.room_id);
 
-        insertChannelTubeRoomLink(event.room_id, "matrix", invite.tube_room_id);
+        insertChannelTubeRoomLink(event.room_id, "matrix", invite.tube_room_id as string);
 
         sendMessage(event.room_id, "You have joined the spacetube!");
     } else {
