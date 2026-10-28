@@ -196,7 +196,7 @@ export async function startChatHackers(app: Express) {
     });
 
     app.get("/chathackers/setup", async function (req: Request, res: Response) {
-        const { roomId, origin } = req.body;
+        const { roomId, origin } = req.query;
 
         if (roomId && origin) {
             const channelId = `${roomId}@${origin}`;
