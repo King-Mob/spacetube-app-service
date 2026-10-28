@@ -19,6 +19,7 @@ import {
 import { sendMessageAsMatrixUser } from "../matrix/handler";
 import { Request, Response, Express } from "express";
 import { ChatHackersEvent, TubeRoomLink, user } from "../types";
+import { channel } from "diagnostics_channel";
 
 const { INVITE_PREFIX } = process.env;
 
@@ -193,6 +194,38 @@ export async function startChatHackers(app: Express) {
             res.send({ success: false, origin: false });
         }
     });
+
+    app.get("/chathackers/setup", async function (req: Request, res: Response) {
+        const { roomId, origin } = req.body;
+
+        if (roomId && origin) {
+            const channelId = `${roomId}@${origin}`;
+            const tubeLink = await getTubeRoomLinkByChannelId(channelId);
+            if (tubeLink) {
+                res.send({ success: true, tubeLink })
+            }
+            else {
+                res.send({ success: false, message: "no tube link for room id" })
+            }
+        }
+        else
+            res.send({ success: false, message: "missing roomId or origin" })
+    })
+
+    app.delete("chathackers/setup", async function (req: Request, res: Response) {
+        const { roomId, origin } = req.body;
+
+        if (roomId && origin) {
+            const channelId = `${roomId}@${origin}`;
+
+            await deleteChannelTubeRoomLinks(channelId);
+
+            res.send({ success: true, message: "tube links for channel deleted" })
+
+        }
+        else
+            res.send({ success: false, message: "missing roomId or origin" })
+    })
 }
 
 async function getMatrixUrlFromChatHackers(chatHackersImageUrl: string) {
