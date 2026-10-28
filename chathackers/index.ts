@@ -205,7 +205,7 @@ export async function startChatHackers(app: Express) {
                 res.send({ success: true, tubeLink })
             }
             else {
-                res.send({ success: false, message: "no tube link for room id" })
+                res.send({ success: false, message: "no tube link for channel id" })
             }
         }
         else
@@ -221,7 +221,6 @@ export async function startChatHackers(app: Express) {
             await deleteChannelTubeRoomLinks(channelId);
 
             res.send({ success: true, message: "tube links for channel deleted" })
-
         }
         else
             res.send({ success: false, message: "missing roomId or origin" })
