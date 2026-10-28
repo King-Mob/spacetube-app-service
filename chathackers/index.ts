@@ -212,7 +212,7 @@ export async function startChatHackers(app: Express) {
             res.send({ success: false, message: "missing roomId or origin" })
     })
 
-    app.delete("chathackers/setup", async function (req: Request, res: Response) {
+    app.delete("/chathackers/setup", async function (req: Request, res: Response) {
         const { roomId, origin } = req.body;
 
         if (roomId && origin) {
