@@ -187,6 +187,8 @@ export async function startChatHackers(app: Express) {
     app.post("/chathackers", async function (req: Request, res: Response) {
         const event: ChatHackersEvent = req.body;
 
+        console.log("chat hackers event", event);
+
         if (event.origin) {
             handleEvent(event);
             res.send({ success: true });
